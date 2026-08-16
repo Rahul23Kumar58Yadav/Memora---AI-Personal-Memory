@@ -1,0 +1,190 @@
+/* ----------------------------------------------------------------------
+   Memora — globals.css
+   Font imports, CSS custom properties (mirrors utils/theme.js), and base
+   resets. Import this once at the app root (main.jsx / index.js) before
+   Tailwind's own directives if you're using Tailwind alongside it.
+---------------------------------------------------------------------- */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Design tokens ------------------------------------------------------
+   Kept as CSS variables too (not just Tailwind arbitrary values) so
+   non-Tailwind contexts — charts, canvas, third-party widgets — can read
+   them via getComputedStyle / var(--memora-brass) etc.
+------------------------------------------------------------------------ */
+:root {
+  /* Surfaces */
+  --memora-ink: #0f1220;
+  --memora-surface: #171b2e;
+  --memora-surface-elevated: #1f2440;
+
+  /* Text */
+  --memora-text-primary: #edeff5;
+  --memora-text-muted: #8a8fa3;
+
+  /* Accent — the "memory thread" colors */
+  --memora-brass: #d4a24c;
+  --memora-teal: #5ec8b8;
+  --memora-rose: #e8637a;
+
+  /* Borders */
+  --memora-border: rgba(255, 255, 255, 0.06);
+  --memora-border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Typography */
+  --memora-font-display: "Space Grotesk", sans-serif;
+  --memora-font-body: "Inter", sans-serif;
+  --memora-font-mono: "IBM Plex Mono", monospace;
+
+  /* Radii + spacing, for anything not using Tailwind's scale */
+  --memora-radius-lg: 1rem;
+  --memora-radius-xl: 1.25rem;
+
+  color-scheme: dark;
+}
+
+/* Light-mode token overrides — placeholder for ThemeContext's future use.
+   Not fully designed yet; dark is the primary, shipped experience. */
+[data-theme="light"] {
+  --memora-ink: #f7f8fa;
+  --memora-surface: #ffffff;
+  --memora-surface-elevated: #eef0f4;
+  --memora-text-primary: #14161f;
+  --memora-text-muted: #6b7086;
+  --memora-border: rgba(15, 18, 32, 0.08);
+  --memora-border-strong: rgba(15, 18, 32, 0.16);
+}
+
+/* ---- Base resets --------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--memora-ink);
+  color: var(--memora-text-primary);
+  font-family: var(--memora-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--memora-font-display);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 0;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--memora-text-muted);
+  opacity: 0.6;
+}
+
+/* Native date/time picker icon — recolor to fit the dark surface instead
+   of the default black-on-transparent that's invisible on --memora-surface */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(64%) sepia(8%) saturate(400%) hue-rotate(190deg);
+  cursor: pointer;
+}
+
+/* ---- Scrollbars ----------------------------------------------------------
+   Slim, low-contrast scrollbars that match the ink surfaces instead of
+   the default OS scrollbar, which looks jarring on a fully dark UI.
+------------------------------------------------------------------------ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--memora-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--memora-border-strong);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ---- Focus states ---------------------------------------------------------
+   One consistent keyboard-focus ring across the whole app (brass, to
+   match the interactive-accent color) instead of each component
+   reinventing focus-within borders.
+------------------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--memora-brass);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---- Utility: hide scrollbar (used by horizontally-scrolling filter chips) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Utility: shared fade/slide-in for cards, modals, toasts -------------- */
+@keyframes memora-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-memora-fade-in {
+  animation: memora-fade-in 0.18s ease-out;
+}
